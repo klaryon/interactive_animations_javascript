@@ -4,6 +4,7 @@ window.onload = function () {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const flowField = new FlowFieldEffect(ctx, canvas.width, canvas.height);
+  flowField.animate();
 };
 
 class FlowFieldEffect {
@@ -16,14 +17,22 @@ class FlowFieldEffect {
     this.#ctx.strokeStyle = "white";
     this.#width = width;
     this.#height = height;
-    console.log("effect loaded");
-    this.#draw(10, 10);
+    this.x = 0;
+    this.y = 0;
   }
   #draw(x, y) {
-    const length = 500;
+    const length = 300;
     this.#ctx.beginPath();
     this.#ctx.moveTo(x, y);
     this.#ctx.lineTo(x + length, y + length);
     this.#ctx.stroke();
+  }
+  animate() {
+    this.#ctx.clearRect(0, 0, this.#width, this.#height);
+    this.#draw(this.x, this.y);
+    this.x += 0.5;
+    this.y += 2.5;
+    console.log("animating");
+    requestAnimationFrame(this.animate.bind(this));
   }
 }
