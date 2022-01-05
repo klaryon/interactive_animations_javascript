@@ -1,11 +1,24 @@
+let canvas;
+let ctx;
+let flowField;
+let flowFieldAnimation;
+
 window.onload = function () {
-  const canvas = document.getElementById("canvas1");
-  const ctx = canvas.getContext("2d");
+  canvas = document.getElementById("canvas1");
+  ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  const flowField = new FlowFieldEffect(ctx, canvas.width, canvas.height);
+  flowField = new FlowFieldEffect(ctx, canvas.width, canvas.height);
   flowField.animate();
 };
+
+window.addEventListener("resize", function () {
+  cancelAnimationFrame(flowFieldAnimation);
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  flowField = new FlowFieldEffect(ctx, canvas.width, canvas.height);
+  flowField.animate();
+});
 
 class FlowFieldEffect {
   //Which canvas element we want to draw on
@@ -17,8 +30,7 @@ class FlowFieldEffect {
     this.#ctx.strokeStyle = "white";
     this.#width = width;
     this.#height = height;
-    this.x = 0;
-    this.y = 0;
+    this.angle = 0;
   }
   #draw(x, y) {
     const length = 300;
@@ -28,11 +40,13 @@ class FlowFieldEffect {
     this.#ctx.stroke();
   }
   animate() {
+    this.angle += 0.1;
     this.#ctx.clearRect(0, 0, this.#width, this.#height);
-    this.#draw(this.x, this.y);
-    this.x += 0.5;
-    this.y += 2.5;
+    this.#draw(
+      this.#width / 2 + Math.sin(this.angle) * 100,
+      this.#height / 2 + Math.cos(this.angle) * 100
+    );
     console.log("animating");
-    requestAnimationFrame(this.animate.bind(this));
+    flowFieldAnimation = requestAnimationFrame(this.animate.bind(this));
   }
 }
